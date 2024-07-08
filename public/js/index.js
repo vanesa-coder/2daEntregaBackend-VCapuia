@@ -1,47 +1,58 @@
-const socket = io(); 
+const socket = io();
 
-const form = document.getElementById("form");
-const productList = document.getElementById("productsList");
+const productsList = document.getElementById("productsList");
+const addForm = document.getElementById("addForm");
+const title = document.getElementById("title");
+const price = document.getElementById("price");
+const description = document.getElementById("description");
+const deleteForm = document.getElementById("deleteForm");
 
-
-
-form.addEventListener("submit", (event) => {
-
-  event.preventDefault();
-  const title = event.target.elements.title.value;
-  const price = event.target.elements.price.value;
-  const stock = event.target.elements.stock.value;
-
-  const newProduct = {
-    title,
-    price,
-    stock
-  };
-
-  socket.emit("product", newProduct);
-  
-})
-
-
+// Recibimos los productos
 socket.on("products", (data) => {
-    productList.innerHTML = "";
-    data.forEach((product, index) => {
-      const div = document.createElement("div");
-      div.classList.add("card");
-      div.innerHTML = `
-      <p>Título: ${product.title}</p>
-      <p>Precio: ${product.price}</p>
-      <p>Stock: ${product.stock}</p>
-      `;
-  
-      productList.append(div);
-      const btn = document.createElement("button");
-      btn.innerText = "comprar";
-      btn.onclick = () => {
-        console.log("comprando");
-        data[index].stock = data[index].stock - 1; 
-        socket.emit("changeStock", data);
-      };
-      div.append(btn);
-    });
-  })
+  console.log(data);
+  productsList.innerHTML = "";
+
+  data.forEach((product) => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.classList.add("m-4");
+    card.innerHTML = `
+      <div class="card-body m-2">
+        <h5 class="card-title">${product.title}</h5>
+        <p class="card-text">ID: ${product.id}</p>
+        <p class="card-text">${product.description}</p>
+        <p class="card-text">$${product.price}</p>
+      </div>
+    `;
+
+    productsList.appendChild(card);
+  });
+});
+
+// Enviamos el producto
+addForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  await fetch("/realtimeproducts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title: title.value, price: price.value, description: description.value }),
+  });
+});
+
+// Eliminar el productos
+
+deleteForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const id = document.getElementById("id");
+  console.log(id);
+  await fetch("/realtimeproducts", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id: id.value }),
+  });
+});

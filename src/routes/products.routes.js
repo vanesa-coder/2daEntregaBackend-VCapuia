@@ -4,11 +4,7 @@ import { checkProductData } from "../middlewares/checkProductData.middleware.js"
 
 const router = Router();
 
-// router.get("/products", async(req, res) => {
-//     const products = await productManage.getProducts();
 
-//     res.send(products);
-// });
 
 router.get("/products", async (req, res) => {
   try {

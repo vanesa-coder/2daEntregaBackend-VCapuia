@@ -13,7 +13,7 @@ const addProduct = async (product) =>{    // esta funcion asincrona va a recibir
 
       // creo un nuevo producto que va a ser un objeto  
     const newProduct = {
-        id: uuid(), // id autoincremental
+        id:  products.length + 1,       // uuid():  id autoincremental y unico
         title,
         description,
         price,
